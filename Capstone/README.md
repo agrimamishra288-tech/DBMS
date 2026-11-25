@@ -1,6 +1,6 @@
 # Hemora — Blood Bank & Donor Matching System
 
-[![CI](https://github.com/agrimamishra288-tech/Hemora/actions/workflows/ci.yml/badge.svg)](https://github.com/agrimamishra288-tech/Hemora/actions/workflows/ci.yml)
+[![CI](https://github.com/agrimamishra288-tech/DBMS/actions/workflows/ci.yml/badge.svg)](https://github.com/agrimamishra288-tech/DBMS/actions/workflows/ci.yml)
 
 A DBMS capstone project: a PostgreSQL-backed API and React dashboard for managing donors, blood inventory, requests, and donations, plus public reference data from data.gov.in and the World Bank.
 
@@ -16,9 +16,20 @@ A DBMS capstone project: a PostgreSQL-backed API and React dashboard for managin
 - Firebase Authentication for Google sign-in
 - Neon Postgres and Vercel (API as a serverless function) for the hosted demo
 
+## Donor matching
+
+Matching is driven by the `blood_compatibility` table (27 ABO/Rh donor-to-recipient rules), not exact group equality: O− is the universal donor, A+ recipients can receive from A+, A−, O+ and O−, and so on.
+
+- `fn_find_matching_donors(request group, city)` returns compatible, available donors who have not donated in the last 90 days. Same-city donors come first, then exact group (score 100), universal O− (80) and other compatible groups (60). Each row includes `same_city`, `is_exact_match` and `compatibility_score`.
+- `fn_find_matching_units(request group, city)` returns available, unexpired compatible units: local stock first, then exact group, then nearest expiry (FEFO).
+- `GET /api/requests/:id/match` runs both functions in parallel, records the top donors in `request_donor_matches`, and moves a pending request to `matched`.
+- The Match panel labels every donor and unit as **Same city** or **Other city**, so requests in cities with no donors still see compatible people elsewhere.
+
+Migration `008_cross_city_matching.sql` holds the current definitions; earlier migrations kept matching inside the request city.
+
 ## Repository layout
 
-This capstone lives in the `Capstone/` folder of the [Hemora repository](https://github.com/agrimamishra288-tech/Hemora), alongside the `Lab/` and `Assignments/` folders.
+This capstone lives in the `Capstone/` folder of the [DBMS repository](https://github.com/agrimamishra288-tech/DBMS), alongside the `Lab/` and `Assignments/` folders.
 
 ```
 Capstone/
