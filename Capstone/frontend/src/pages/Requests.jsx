@@ -233,7 +233,7 @@ function MatchPanel({ requestId, onClose }) {
                     <div className="w-11 h-11 mx-auto mb-3 rounded-full bg-dark-800 border border-dark-700 flex items-center justify-center text-blood-400">
                       <UsersRound size={18} />
                     </div>
-                    <p>No eligible compatible donors found in {data.request?.city}.</p>
+                    <p>No eligible compatible donors right now.</p>
                   </div>
                 ) : (
                   <ul className="space-y-3">
@@ -260,6 +260,11 @@ function MatchPanel({ requestId, onClose }) {
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
                           {d.compatibility_score && <ScoreBadge score={d.compatibility_score} />}
+                          {d.same_city ? (
+                            <span className="badge bg-blue-900/40 text-blue-300 border border-blue-800/50">Same city</span>
+                          ) : (
+                            <span className="badge bg-dark-700 text-dark-300 border border-dark-600">Other city</span>
+                          )}
                           {d.is_exact_match && (
                             <span className="badge bg-green-900/50 text-green-400 border border-green-700/50">Exact Match</span>
                           )}
@@ -315,9 +320,16 @@ function MatchPanel({ requestId, onClose }) {
                               </p>
                             </div>
                           </div>
-                          {u.is_exact_match && (
-                            <span className="badge bg-green-900/50 text-green-400 border border-green-700/50">Exact Match</span>
-                          )}
+                          <div className="flex items-center gap-2 flex-shrink-0">
+                            {u.same_city ? (
+                              <span className="badge bg-blue-900/40 text-blue-300 border border-blue-800/50">Same city</span>
+                            ) : (
+                              <span className="badge bg-dark-700 text-dark-300 border border-dark-600">Other city</span>
+                            )}
+                            {u.is_exact_match && (
+                              <span className="badge bg-green-900/50 text-green-400 border border-green-700/50">Exact Match</span>
+                            )}
+                          </div>
                         </li>
                       ))}
                     </ul>

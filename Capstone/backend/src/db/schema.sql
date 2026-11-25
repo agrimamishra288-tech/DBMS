@@ -589,9 +589,10 @@ RETURNS NUMERIC LANGUAGE sql IMMUTABLE STRICT AS $$
         )
 $$;
 
--- fn_find_matching_donors: returns compatible + eligible donors in a city,
--- now also returns a compatibility_score (100=exact, 80=universal O-, 60=compatible)
--- Older databases have a different result table, which CREATE OR REPLACE cannot change.
+-- fn_find_matching_donors: returns compatible + eligible donors across the
+-- network, same city first, with compatibility_score (100=exact, 80=universal
+-- O-, 60=compatible). Older databases have a different result table, which
+-- CREATE OR REPLACE cannot change.
 DROP FUNCTION IF EXISTS fn_find_matching_donors(TEXT, TEXT);
 CREATE OR REPLACE FUNCTION fn_find_matching_donors(
     p_blood_group TEXT,
@@ -605,6 +606,7 @@ RETURNS TABLE (
     city               TEXT,
     last_donation_date DATE,
     total_donations    INT,
+    same_city          BOOLEAN,
     is_exact_match     BOOLEAN,
     compatibility_score INT
 ) LANGUAGE sql STABLE AS $$
@@ -616,6 +618,7 @@ RETURNS TABLE (
         d.city,
         d.last_donation_date,
         d.total_donations,
+        (d.city ILIKE p_city) AS same_city,
         (d.blood_group = p_blood_group) AS is_exact_match,
         CASE
             WHEN d.blood_group = p_blood_group THEN 100   -- exact ABO+Rh match
@@ -627,24 +630,26 @@ RETURNS TABLE (
     JOIN blood_compatibility c
         ON c.donor_group = d.blood_group
        AND c.recipient_group = p_blood_group
-    WHERE d.city ILIKE p_city
-      AND d.is_available = TRUE
+    WHERE d.is_available = TRUE
       AND u.is_active = TRUE
       AND (
           d.last_donation_date IS NULL
           OR d.last_donation_date <= CURRENT_DATE - INTERVAL '90 days'
       )
     ORDER BY
+        (d.city ILIKE p_city) DESC,                  -- same city first
         compatibility_score DESC,                    -- highest score first
-        (d.blood_group = p_blood_group) DESC,        -- exact match first
         d.last_donation_date ASC NULLS FIRST;        -- never donated first
 $$;
 
--- fn_find_matching_units: available compatible units, nearest expiry first
--- Older databases have a different result table, which CREATE OR REPLACE cannot change.
+-- fn_find_matching_units: available compatible units, request-city stock first,
+-- then nearest expiry. Older databases have a different result table, which
+-- CREATE OR REPLACE cannot change.
 DROP FUNCTION IF EXISTS fn_find_matching_units(TEXT);
+DROP FUNCTION IF EXISTS fn_find_matching_units(TEXT, TEXT);
 CREATE OR REPLACE FUNCTION fn_find_matching_units(
-    p_blood_group TEXT
+    p_blood_group TEXT,
+    p_city        TEXT DEFAULT NULL
 )
 RETURNS TABLE (
     unit_id        INT,
@@ -655,6 +660,7 @@ RETURNS TABLE (
     bank_contact   TEXT,
     collection_date DATE,
     expiry_date    DATE,
+    same_city      BOOLEAN,
     is_exact_match BOOLEAN
 ) LANGUAGE sql STABLE AS $$
     SELECT
@@ -666,6 +672,7 @@ RETURNS TABLE (
         b.contact_phone AS bank_contact,
         i.collection_date,
         i.expiry_date,
+        (p_city IS NOT NULL AND b.city ILIKE p_city) AS same_city,
         (i.blood_group = p_blood_group) AS is_exact_match
     FROM inventory i
     JOIN blood_banks b ON b.bank_id = i.bank_id
@@ -675,8 +682,9 @@ RETURNS TABLE (
     WHERE i.status = 'available'
       AND i.expiry_date >= CURRENT_DATE
     ORDER BY
-        (i.blood_group = p_blood_group) DESC,   -- exact match first
-        i.expiry_date ASC;                       -- nearest expiry first
+        (p_city IS NOT NULL AND b.city ILIKE p_city) DESC,  -- local stock first
+        (i.blood_group = p_blood_group) DESC,                -- exact match first
+        i.expiry_date ASC;                                   -- nearest expiry first
 $$;
 
 -- sp_register_donation: atomically record donation + add inventory unit

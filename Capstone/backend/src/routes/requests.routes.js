@@ -166,7 +166,7 @@ router.get('/:id/match', authenticate, authorize('admin','hospital'), async (req
     // Run both matching functions in parallel
     const [donorRes, unitRes] = await Promise.all([
       pool.query(`SELECT * FROM fn_find_matching_donors($1, $2)`, [request.blood_group, request.city]),
-      pool.query(`SELECT * FROM fn_find_matching_units($1)`,      [request.blood_group]),
+      pool.query(`SELECT * FROM fn_find_matching_units($1, $2)`,      [request.blood_group, request.city]),
     ]);
 
     // Auto-insert notified matches for top donors (upsert, ignore conflicts)
