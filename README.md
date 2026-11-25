@@ -1,6 +1,6 @@
-# Hemora - Blood Bank & Donor Matching System
+# Hemora — Blood Bank & Donor Matching System
 
-[![CI](https://github.com/agrimamishra288-tech/BloodBank/actions/workflows/ci.yml/badge.svg)](https://github.com/agrimamishra288-tech/BloodBank/actions/workflows/ci.yml)
+[![CI](https://github.com/agrimamishra288-tech/DBMS/actions/workflows/ci.yml/badge.svg)](https://github.com/agrimamishra288-tech/DBMS/actions/workflows/ci.yml)
 
 A DBMS capstone project: a PostgreSQL-backed API and React dashboard for managing donors, blood inventory, requests, and donations, plus public reference data from data.gov.in and the World Bank.
 
@@ -19,8 +19,12 @@ A DBMS capstone project: a PostgreSQL-backed API and React dashboard for managin
 ## Repository layout
 
 ```
-backend/    Express API, SQL schema, migrations, seed data, import scripts
-frontend/   React single-page dashboard
+Capstone/           Full capstone project
+  backend/          Express API, SQL schema, migrations, seed data, import scripts
+  frontend/         React single-page dashboard
+  docs/             Report diagrams and documentation assets
+Lab/                Lab exercises
+Assignments/        Assignment submissions
 ```
 
 ## Local setup
@@ -30,7 +34,7 @@ Requirements: Node.js 20+, PostgreSQL 14+.
 ### Backend
 
 ```bash
-cd backend
+cd Capstone/backend
 npm install
 cp .env.example .env      # set DATABASE_URL and JWT_SECRET
 npm run init-db           # schema + migrations + seed (seeds only if the database is empty)
@@ -45,13 +49,13 @@ npm start                 # http://localhost:5000
 ### Frontend
 
 ```bash
-cd frontend
+cd Capstone/frontend
 npm install
 cp .env.example .env      # Vite Firebase settings
 npm run dev               # http://localhost:5173, proxies /api to port 5000
 ```
 
-Set `VITE_PROXY_TARGET` in `frontend/.env` if the API runs somewhere other than `http://localhost:5000`.
+Set `VITE_PROXY_TARGET` in `Capstone/frontend/.env` if the API runs somewhere other than `http://localhost:5000`.
 
 ## Data provenance
 
@@ -62,21 +66,22 @@ Set `VITE_PROXY_TARGET` in `frontend/.env` if the API runs somewhere other than 
 ## Checks
 
 - API health: `curl https://hemora-api.vercel.app/api/health` (expect `200` with a database timestamp)
-- API smoke test: `cd backend && BASE_URL=https://hemora-api.vercel.app npm run smoke` (health, login, dashboard stats)
-- Local frontend build: `cd frontend && npm run build`
-- Local API syntax: `cd backend && find src -name '*.js' -print0 | xargs -0 -n1 node --check`
-- GitHub Actions runs both checks on every push to `main` and on pull requests.
+- API smoke test: `cd Capstone/backend && BASE_URL=https://hemora-api.vercel.app npm run smoke` (health, login, dashboard stats)
+- Local frontend build: `cd Capstone/frontend && npm run build`
+- Local API syntax: `cd Capstone/backend && find src -name '*.js' -print0 | xargs -0 -n1 node --check`
+- GitHub Actions runs both checks on every push to `main` and on pull requests; the workflow builds `Capstone/backend` and `Capstone/frontend`.
 
 ## Deployment notes
 
-- Vercel imports `backend/src/app.js`, which exports the Express app; the long-running listener lives in `backend/src/start.js` for local development.
+- Vercel imports `Capstone/backend/src/app.js`, which exports the Express app; the long-running listener lives in `Capstone/backend/src/start.js` for local development.
 - The database is hosted on Neon; redeploying does not reseed or modify existing data.
 - Firebase Admin credentials come from `GOOGLE_APPLICATION_CREDENTIALS` (file path) locally or `GOOGLE_APPLICATION_CREDENTIALS_JSON` (inline JSON) when hosted.
 - Google sign-in requires the frontend domain to be listed in Firebase Authentication -> Settings -> Authorized domains.
 
 ## Documentation
 
-- `DATABASE_DEMO_GUIDE.md` — database walkthrough for the demo
-- `PRODUCT_REQUIREMENTS_DOCUMENT.md` — requirements
-- `PROJECT_REPORT.md` — report
-- `REAL_DATA_INTEGRATION_GUIDE.md` — public data sources and imports
+- `Capstone/README.md` — project overview and setup
+- `Capstone/DATABASE_DEMO_GUIDE.md` — database walkthrough for the demo
+- `Capstone/PRODUCT_REQUIREMENTS_DOCUMENT.md` — requirements
+- `Capstone/PROJECT_REPORT.md` — report
+- `Capstone/REAL_DATA_INTEGRATION_GUIDE.md` — public data sources and imports
