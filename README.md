@@ -1,4 +1,4 @@
-# Hemora — Blood Bank & Donor Matching System
+# Hemora - Blood Bank & Donor Matching System
 
 [![CI](https://github.com/agrimamishra288-tech/BloodBank/actions/workflows/ci.yml/badge.svg)](https://github.com/agrimamishra288-tech/BloodBank/actions/workflows/ci.yml)
 
