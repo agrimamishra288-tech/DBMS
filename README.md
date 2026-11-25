@@ -1,6 +1,6 @@
 # Hemora — Blood Bank & Donor Matching System
 
-[![CI](https://github.com/agrimamishra288-tech/BloodBank/actions/workflows/ci.yml/badge.svg)](https://github.com/agrimamishra288-tech/BloodBank/actions/workflows/ci.yml)
+[![CI](https://github.com/agrimamishra288-tech/Hemora/actions/workflows/ci.yml/badge.svg)](https://github.com/agrimamishra288-tech/Hemora/actions/workflows/ci.yml)
 
 A DBMS capstone project: a PostgreSQL-backed API and React dashboard for managing donors, blood inventory, requests, and donations, plus public reference data from data.gov.in and the World Bank.
 
