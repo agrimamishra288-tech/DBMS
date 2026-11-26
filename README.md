@@ -142,8 +142,6 @@ Set `VITE_PROXY_TARGET` in `Capstone/frontend/.env` if the API runs somewhere ot
 ## Documentation
 
 - `Capstone/README.md` — capstone overview and setup
-- `Capstone/PROJECT_REPORT.md` — project report
+- `Capstone/Hemora_Project_Report.pdf` — project report (PDF)
 - `Capstone/DATABASE_DEMO_GUIDE.md` — database walkthrough for the demo
-- `Capstone/PRODUCT_REQUIREMENTS_DOCUMENT.md` — requirements
-- `Capstone/REAL_DATA_INTEGRATION_GUIDE.md` — public data sources and imports
 - `Capstone/docs/report-assets/` — architecture, ER and flow diagrams plus page screenshots

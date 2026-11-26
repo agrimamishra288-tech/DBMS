@@ -158,8 +158,6 @@ For the ER diagram, pgAdmin walkthrough, table relationships, sample queries, an
 
 The public directory refresh checks the publisher at startup and every 24 hours. Its underlying official source was last updated in 2022; the refresh does not represent live stock or patient data. Source attribution and caveat are documented in [`src/db/data/README.md`](src/db/data/README.md).
 
-For a step-by-step guide to requesting authorized live e-RaktKosh access or importing hospital-approved de-identified sample data, see [`../REAL_DATA_INTEGRATION_GUIDE.md`](../REAL_DATA_INTEGRATION_GUIDE.md).
-
 ### 5. Start the Server
 
 ```bash
